@@ -1,0 +1,43 @@
+# --------------------------------------------------------------------------------------------------
+# VPC Outputs
+# これらは他のモジュール（EC2, ECS, Lambda等）がこのVPCを利用するために公開する「窓口」です。
+# --------------------------------------------------------------------------------------------------
+
+output "vpc_id" {
+  description = "VPCのID"
+  value       = aws_vpc.this.id
+}
+
+output "vpc_cidr_block" {
+  description = "VPCのCIDRブロック"
+  value       = aws_vpc.this.cidr_block
+}
+
+# --- Subnets ---
+
+output "public_subnet_ids" {
+  description = "パブリックサブネットのIDリスト"
+  value       = aws_subnet.public[*].id
+}
+
+output "app_subnet_ids" {
+  description = "アプリ層（プライベート）サブネットのIDリスト"
+  value       = aws_subnet.app[*].id
+}
+
+output "db_subnet_ids" {
+  description = "データ層（プライベート）サブネットのIDリスト"
+  value       = aws_subnet.db[*].id
+}
+
+# --- Route Tables ---
+
+output "public_route_table_id" {
+  description = "パブリック用ルートテーブルのID"
+  value       = aws_route_table.public.id
+}
+
+output "private_route_table_id" {
+  description = "プライベート用ルートテーブルのID"
+  value       = aws_route_table.private.id
+}
