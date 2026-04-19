@@ -1,7 +1,7 @@
-# 1. ログの保管先（CloudWatch Logs Group）
+# 1. ログの保管先
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name              = "/aws/vpc-flow-logs/${var.vpc_name}"
-  retention_in_days = var.flow_log_retention_days # 保存期間を変数で制御
+  retention_in_days = var.flow_log_retention_days
 
   tags = local.common_tags
 }
@@ -10,13 +10,13 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
 resource "aws_flow_log" "this" {
   iam_role_arn    = aws_iam_role.vpc_flow_log_role.arn
   log_destination = aws_cloudwatch_log_group.vpc_flow_logs.arn
-  traffic_type    = "ALL" # REJECTのみに絞ることも可能
+  traffic_type    = "ALL"
   vpc_id          = aws_vpc.this.id
 
   tags = merge(local.common_tags, { Name = "${var.vpc_name}-flow-logs" })
 }
 
-# 3. VPCがログを書き込むためのIAMロール
+# 3. IAMロール
 resource "aws_iam_role" "vpc_flow_log_role" {
   name = "${var.vpc_name}-flow-log-role"
 
@@ -30,7 +30,7 @@ resource "aws_iam_role" "vpc_flow_log_role" {
   })
 }
 
-# 4. IAMロールに権限を付与
+# 4. IAMロールに権限を付与（最小権限に修正）
 resource "aws_iam_role_policy" "vpc_flow_log_policy" {
   name = "${var.vpc_name}-flow-log-policy"
   role = aws_iam_role.vpc_flow_log_role.id
@@ -44,8 +44,9 @@ resource "aws_iam_role_policy" "vpc_flow_log_policy" {
         "logs:DescribeLogGroups",
         "logs:DescribeLogStreams"
       ]
-      Effect   = "Allow"
-      Resource = "*"
+      Effect = "Allow"
+      # 【修正】対象をこのVPCのロググループ配下のログストリームのみに限定
+      Resource = "${aws_cloudwatch_log_group.vpc_flow_logs.arn}:*"
     }]
   })
 }

@@ -37,7 +37,24 @@ output "public_route_table_id" {
   value       = aws_route_table.public.id
 }
 
-output "private_route_table_id" {
-  description = "プライベート用ルートテーブルのID"
-  value       = aws_route_table.private.id
+output "private_route_table_ids" {
+  description = "プライベート用ルートテーブルのIDリスト"
+  value       = aws_route_table.private[*].id
+}
+
+# --- Security Groups (追記箇所) ---
+
+output "web_sg_id" {
+  description = "Web/ALB用セキュリティグループのID"
+  value       = aws_security_group.web.id
+}
+
+output "app_sg_id" {
+  description = "アプリ層用セキュリティグループのID"
+  value       = aws_security_group.app.id
+}
+
+output "db_sg_id" {
+  description = "DB層用セキュリティグループのID"
+  value       = aws_security_group.db.id
 }

@@ -1,17 +1,18 @@
+# --- Data Source ---
+data "aws_region" "current" {}
+
 # --------------------------------------------------------------------------------------------------
 # VPC Endpoints (Gateway Type)
 # --------------------------------------------------------------------------------------------------
 
-# S3 エンドポイント (Gateway型)
-# NAT Gateway経由の通信を避け、コストを削減しつつセキュリティを向上させます。
+# S3 エンドポイント
 resource "aws_vpc_endpoint" "s3" {
   count             = var.enable_s3_endpoint ? 1 : 0
   vpc_id            = aws_vpc.this.id
-  service_name      = "com.amazonaws.ap-northeast-1.s3"
+  # 【修正】.name から .id に変更
+  service_name      = "com.amazonaws.${data.aws_region.current.id}.s3"
   vpc_endpoint_type = "Gateway"
 
-  # 関連付けるルートテーブル
-  # パブリックとプライベート（App/DB）の両方に紐付けておくのが一般的です。
   route_table_ids = concat(
     [aws_route_table.public.id],
     aws_route_table.private[*].id
@@ -23,12 +24,12 @@ resource "aws_vpc_endpoint" "s3" {
   )
 }
 
-# DynamoDB エンドポイント (Gateway型)
-# S3と同様、無料でプライベート通信を可能にします。
+# DynamoDB エンドポイント
 resource "aws_vpc_endpoint" "dynamodb" {
   count             = var.enable_dynamodb_endpoint ? 1 : 0
   vpc_id            = aws_vpc.this.id
-  service_name      = "com.amazonaws.ap-northeast-1.dynamodb"
+  # 【修正】.name から .id に変更
+  service_name      = "com.amazonaws.${data.aws_region.current.id}.dynamodb"
   vpc_endpoint_type = "Gateway"
 
   route_table_ids = concat(
