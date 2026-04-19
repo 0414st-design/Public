@@ -30,7 +30,6 @@ resource "aws_iam_role" "vpc_flow_log_role" {
   })
 }
 
-# 4. IAMロールに権限を付与（最小権限に修正）
 resource "aws_iam_role_policy" "vpc_flow_log_policy" {
   name = "${var.vpc_name}-flow-log-policy"
   role = aws_iam_role.vpc_flow_log_role.id
