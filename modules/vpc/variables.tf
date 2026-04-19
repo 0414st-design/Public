@@ -70,7 +70,7 @@ variable "flow_log_retention_days" {
 
 # --- NAT Gateway 制御フラグ ---
 variable "enable_nat_gateway" {
-  description = "NAT Gatewayを作成し、プライベートサブネットからインターネットへの通信を可能にするか"
+  description = "NAT Gatewayを作成し、プライベートサブネットからインターネットへの通信を可能にするか" 
   type        = bool
   default     = false
 }
