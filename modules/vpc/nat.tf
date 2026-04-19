@@ -11,7 +11,7 @@ resource "aws_eip" "nat" {
   domain = "vpc"
 
   tags = merge(
-    local.common_tags, # 
+    local.common_tags, 
     { Name = "${var.vpc_name}-nat-eip-${count.index}" }
   )
 }
@@ -31,10 +31,10 @@ resource "aws_nat_gateway" "this" {
   subnet_id = aws_subnet.public[count.index].id
 
   tags = merge(
-    local.common_tags, # [cite: 3, 5]
+    local.common_tags, 
     { Name = "${var.vpc_name}-nat-${count.index}" }
   )
 
   # 明示的な依存関係（EIPができてからNATGWを作る）
-  depends_on = [aws_internet_gateway.this] # 
+  depends_on = [aws_internet_gateway.this] 
 }

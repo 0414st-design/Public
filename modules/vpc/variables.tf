@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
+    }
+  }
+}
+
 variable "vpc_cidr" {
   description = "VPC全体のIP範囲 (例: 10.0.0.0/16)"
   type        = string
