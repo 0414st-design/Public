@@ -28,7 +28,7 @@ resource "aws_nat_gateway" "this" {
   
   # 配置するサブネットの指定
   # single_nat_gateway = true の場合は常に 1つ目(index 0) のパブリックサブネットに作成されます
-  subnet_id = aws_subnet.public[count.index].id # [cite: 4]
+  subnet_id = aws_subnet.public[count.index].id
 
   tags = merge(
     local.common_tags, # [cite: 3, 5]

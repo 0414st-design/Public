@@ -6,19 +6,17 @@ on:
 jobs:
   docs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write          # ← 明示的に権限を宣言
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4    # ← v4に統一
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Render terraform docs
-        uses: terraform-docs/gh-actions@v1.0.0
+        uses: terraform-docs/gh-actions@v1.3.0   # ← 最新安定版に更新
         with:
-          working-dir: .
+          working-dir: modules/vpc   # ← モジュール単位で生成する方が精度高い
           output-file: README.md
           output-method: inject
-
-      - name: Git Checkin
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "docs: auto-update terraform-docs"
+          git-push: true             # ← git-auto-commitを別途使わず内蔵機能で完結

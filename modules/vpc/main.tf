@@ -33,7 +33,7 @@ resource "aws_subnet" "public" {
 
   tags = merge(
     local.common_tags,
-    { Name = "${var.vpc_name}-public-${count.index}" }
+    { Name = "${var.vpc_name}-public-${var.azs[count.index]}" }
   )
 }
 

@@ -83,6 +83,8 @@ variable "single_nat_gateway" {
 
 variable "one_nat_gateway_per_az" {
   description = "可用性を高めるため、各AZに1つずつNAT Gatewayを作成するか"
+  # lab: false（single NATでコスト優先）
+  # prd: true（AZ障害時の影響を局所化）
   type        = bool
   default     = false
 }
