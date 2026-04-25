@@ -6,6 +6,19 @@ locals {
     Project     = var.project
     ManagedBy   = "Terraform"
   }
+
+  # EKS用タグ
+  # enable_eks=true かつ eks_cluster_name が指定されている場合のみ付与する
+  # kubernetes.io/cluster/{name}: EKSがサブネットを認識するために必要
+  eks_public_tags = var.enable_eks ? {
+    "kubernetes.io/role/elb"                          = "1"
+    "kubernetes.io/cluster/${var.eks_cluster_name}"   = "shared"
+  } : {}
+
+  eks_private_tags = var.enable_eks ? {
+    "kubernetes.io/role/internal-elb"                 = "1"
+    "kubernetes.io/cluster/${var.eks_cluster_name}"   = "shared"
+  } : {}
 }
 
 # VPC
@@ -35,6 +48,7 @@ resource "aws_subnet" "public" {
 
   tags = merge(
     local.common_tags,
+    local.eks_public_tags,
     { Name = "${var.vpc_name}-public-${var.azs[count.index]}" }
   )
 }
@@ -52,7 +66,8 @@ resource "aws_subnet" "app" {
 
   tags = merge(
     local.common_tags,
-    { Name = "${var.vpc_name}-app-${count.index}" }
+    local.eks_private_tags,
+    { Name = "${var.vpc_name}-app-${var.azs[count.index]}" }
   )
 }
 
@@ -69,7 +84,8 @@ resource "aws_subnet" "db" {
 
   tags = merge(
     local.common_tags,
-    { Name = "${var.vpc_name}-db-${count.index}" }
+    # db層はEKSのワーカーノード・ALB配置対象外のためEKSタグは付与しない
+    { Name = "${var.vpc_name}-db-${var.azs[count.index]}" }
   )
 }
 
@@ -86,6 +102,7 @@ resource "aws_subnet" "management" {
 
   tags = merge(
     local.common_tags,
-    { Name = "${var.vpc_name}-management-${count.index}" }
+    # management層はEKSのワーカーノード・ALB配置対象外のためEKSタグは付与しない
+    { Name = "${var.vpc_name}-management-${var.azs[count.index]}" }
   )
 }

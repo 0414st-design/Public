@@ -29,6 +29,24 @@ variable "management_subnet_offsets" {
   default     = []
 }
 
+# --- EKS 設定 ---
+variable "enable_eks" {
+  description = "EKS用のサブネットタグを付与するかどうか。EKSクラスターを作成する場合はtrueにする"
+  type        = bool
+  default     = false
+}
+
+variable "eks_cluster_name" {
+  description = "EKSクラスター名。enable_eks=trueの場合に必須（kubernetes.io/cluster/{name}タグに使用）"
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = !var.enable_eks || var.eks_cluster_name != ""
+    error_message = "enable_eks=trueの場合、eks_cluster_nameを指定してください。"
+  }
+}
+
 # --- 基本情報 ---
 variable "vpc_name" {
   description = "VPCの名称 (タグやリソース名の接頭辞に使用)"
