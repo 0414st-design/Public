@@ -37,9 +37,19 @@ output "public_route_table_id" {
   value       = aws_route_table.public.id
 }
 
-output "private_route_table_ids" {
-  description = "プライベート用ルートテーブルのIDリスト"
-  value       = aws_route_table.private[*].id
+output "app_route_table_ids" {
+  description = "app層ルートテーブルのIDリスト"
+  value       = aws_route_table.app[*].id
+}
+
+output "db_route_table_ids" {
+  description = "db層ルートテーブルのIDリスト"
+  value       = aws_route_table.db[*].id
+}
+
+output "management_route_table_ids" {
+  description = "management層ルートテーブルのIDリスト（サブネットが0の場合は空リスト）"
+  value       = aws_route_table.management[*].id
 }
 
 # --- Security Groups (追記箇所) ---
@@ -57,4 +67,9 @@ output "app_sg_id" {
 output "db_sg_id" {
   description = "DB層用セキュリティグループのID"
   value       = aws_security_group.db.id
+}
+
+output "management_subnet_ids" {
+  description = "管理層（プライベート）サブネットのIDリスト"
+  value       = aws_subnet.management[*].id
 }
