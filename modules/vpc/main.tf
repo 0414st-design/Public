@@ -106,20 +106,3 @@ resource "aws_subnet" "management" {
     { Name = "${var.vpc_name}-management-${var.azs[count.index]}" }
   )
 }
-
-# 管理層のプライベートサブネット
-resource "aws_subnet" "management" {
-  # Offsetリストの要素数がそのままサブネットの作成数になる（[] なら0個=作成しない）
-  count = length(var.management_subnet_offsets)
-
-  vpc_id            = aws_vpc.this.id
-  availability_zone = var.azs[count.index]
-
-  # 例: vpc_cidr=10.0.0.0/16, offset=31 → 10.0.31.0/24
-  cidr_block = cidrsubnet(var.vpc_cidr, 8, var.management_subnet_offsets[count.index])
-
-  tags = merge(
-    local.common_tags,
-    { Name = "${var.vpc_name}-management-${count.index}" }
-  )
-}
