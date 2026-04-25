@@ -6,6 +6,15 @@ terraform {
       version = "~> 6.0"
     }
   }
+
+  # LABアカウント取得後に有効化する
+  # backend "s3" {
+  #   bucket         = "mylab-tfstate"
+  #   key            = "vpc/terraform.tfstate"
+  #   region         = "ap-northeast-1"
+  #   dynamodb_table = "mylab-tfstate-lock"
+  #   encrypt        = true
+  # }
 }
 
 # AWSを使うための宣言（プロバイダー）
@@ -29,13 +38,13 @@ module "my_vpc" {
   app_subnet_offsets    = [11, 12] # 10.0.11.0/24, 10.0.12.0/24 相当
   db_subnet_offsets     = [21, 22] # 10.0.21.0/24, 10.0.22.0/24 相当
 
-  # --- NAT Gateway 設定 (追記箇所) ---
+  # --- NAT Gateway 設定 ---
   # まずはコストを抑えた「Single NAT Gateway」構成に設定しています
   enable_nat_gateway     = true
   single_nat_gateway     = true
   one_nat_gateway_per_az = false
 
-  # エンドポイント設定（既存）
+  # エンドポイント設定
   enable_s3_endpoint       = true
   enable_dynamodb_endpoint = true
 

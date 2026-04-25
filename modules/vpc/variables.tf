@@ -1,12 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 6.0"
-    }
-  }
-}
-
 variable "vpc_cidr" {
   description = "VPC全体のIP範囲 (例: 10.0.0.0/16)"
   type        = string
@@ -30,6 +21,12 @@ variable "db_subnet_offsets" {
   description = "DB層サブネットを cidrsubnet 関数で計算する際の第3引数(インデックス)のリスト"
   type        = list(number)
   default     = [21, 22]
+}
+
+variable "management_subnet_offsets" {
+  description = "管理層サブネットのOffsetリスト。踏み台・監視・CI/CDランナー等に使用。不要な場合は [] を指定（NAT GW経由でインターネットに接続）"
+  type        = list(number)
+  default     = []
 }
 
 # --- 基本情報 ---

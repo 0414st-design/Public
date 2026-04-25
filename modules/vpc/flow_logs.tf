@@ -44,7 +44,6 @@ resource "aws_iam_role_policy" "vpc_flow_log_policy" {
         "logs:DescribeLogStreams"
       ]
       Effect = "Allow"
-      # 【修正】対象をこのVPCのロググループ配下のログストリームのみに限定
       Resource = "${aws_cloudwatch_log_group.vpc_flow_logs.arn}:*"
     }]
   })
