@@ -42,7 +42,7 @@ resource "aws_subnet" "public" {
   availability_zone       = var.azs[count.index]
   map_public_ip_on_launch = true # パブリックサブネットはEC2起動時にパブリックIPを自動付与
 
-  # vpc_cidrを/24に分割する（/20 + newbits=4 → /24）。Offsetでどの区画を使うか指定する
+  # vpc_cidrを/24に分割する（/20 + newbits=4 → /24）。Offsetでどの区画を使うか指定する。
   # 例: vpc_cidr=172.16.0.0/20, offset=0 → 172.16.0.0/24
   cidr_block = cidrsubnet(var.vpc_cidr, 4, var.public_subnet_offsets[count.index])
 

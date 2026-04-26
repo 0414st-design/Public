@@ -1,41 +1,42 @@
-name: "Terraform Linter"
+name: "Terraform CI" 
 
 on:
   push:
     branches:
       - main
   pull_request:
-
-jobs:
-  terraform:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Format Check
-        run: terraform fmt -check
-
-      - name: Terraform Validate
-        run: terraform validate
-
-name: "Terraform Security Scan"
-
-on:
-  pull_request:
     branches:
       - main
 
 jobs:
+  # 構文チェック（Linter）を行うジョブ
+  lint:
+    name: "Terraform Linter"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+
+      - name: "Setup Terraform"
+        uses: hashicorp/setup-terraform@v3
+
+      # terraform init を実行し、必要なプロバイダーをダウンロードする。
+      - name: "Terraform Init"
+        run: terraform init
+
+      # terraform fmt を実行し、コードの整形ルールに違反がないか確認する。
+      - name: "Terraform Format Check"
+        run: terraform fmt -check
+
+      # terraform validate を実行し、コードの論理的な構文エラーがないか確認する。
+      - name: "Terraform Validate"
+        run: terraform validate
+
+  # セキュリティスキャンを行うジョブ
   security_scan:
     name: "Security Scan"
     runs-on: ubuntu-latest
+    # lintジョブが成功した後に実行したい場合は「needs: lint」を追記することも可能
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v4
