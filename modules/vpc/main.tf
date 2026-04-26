@@ -42,9 +42,9 @@ resource "aws_subnet" "public" {
   availability_zone       = var.azs[count.index]
   map_public_ip_on_launch = true # パブリックサブネットはEC2起動時にパブリックIPを自動付与
 
-  # vpc_cidrを/24に分割し、Offsetの番号をサブネット番号として使う
-  # 例: vpc_cidr=10.0.0.0/16, offset=1 → 10.0.1.0/24
-  cidr_block = cidrsubnet(var.vpc_cidr, 8, var.public_subnet_offsets[count.index])
+  # vpc_cidrを/24に分割する（/20 + newbits=4 → /24）。Offsetでどの区画を使うか指定する
+  # 例: vpc_cidr=172.16.0.0/20, offset=0 → 172.16.0.0/24
+  cidr_block = cidrsubnet(var.vpc_cidr, 4, var.public_subnet_offsets[count.index])
 
   tags = merge(
     local.common_tags,
@@ -61,8 +61,8 @@ resource "aws_subnet" "app" {
   vpc_id            = aws_vpc.this.id
   availability_zone = var.azs[count.index]
 
-  # 例: vpc_cidr=10.0.0.0/16, offset=11 → 10.0.11.0/24
-  cidr_block = cidrsubnet(var.vpc_cidr, 8, var.app_subnet_offsets[count.index])
+  # 例: vpc_cidr=172.16.0.0/20, offset=4 → 172.16.4.0/24
+  cidr_block = cidrsubnet(var.vpc_cidr, 4, var.app_subnet_offsets[count.index])
 
   tags = merge(
     local.common_tags,
@@ -79,8 +79,8 @@ resource "aws_subnet" "db" {
   vpc_id            = aws_vpc.this.id
   availability_zone = var.azs[count.index]
 
-  # 例: vpc_cidr=10.0.0.0/16, offset=21 → 10.0.21.0/24
-  cidr_block = cidrsubnet(var.vpc_cidr, 8, var.db_subnet_offsets[count.index])
+  # 例: vpc_cidr=172.16.0.0/20, offset=8 → 172.16.8.0/24
+  cidr_block = cidrsubnet(var.vpc_cidr, 4, var.db_subnet_offsets[count.index])
 
   tags = merge(
     local.common_tags,
@@ -97,8 +97,8 @@ resource "aws_subnet" "management" {
   vpc_id            = aws_vpc.this.id
   availability_zone = var.azs[count.index]
 
-  # 例: vpc_cidr=10.0.0.0/16, offset=31 → 10.0.31.0/24
-  cidr_block = cidrsubnet(var.vpc_cidr, 8, var.management_subnet_offsets[count.index])
+  # 例: vpc_cidr=172.16.0.0/20, offset=12 → 172.16.12.0/24
+  cidr_block = cidrsubnet(var.vpc_cidr, 4, var.management_subnet_offsets[count.index])
 
   tags = merge(
     local.common_tags,
@@ -106,3 +106,4 @@ resource "aws_subnet" "management" {
     { Name = "${var.vpc_name}-management-${var.azs[count.index]}" }
   )
 }
+

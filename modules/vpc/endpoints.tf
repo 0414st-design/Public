@@ -17,6 +17,12 @@ locals {
     aws_route_table.db[*].id,
     aws_route_table.management[*].id,
   )
+
+  # DB NACL で使用。app サブネットの CIDR を動的計算し、接続元を app 層に限定する。
+  app_subnet_cidrs = [
+    for offset in var.app_subnet_offsets :
+    cidrsubnet(var.vpc_cidr, 8, offset)
+  ]
 }
 
 # S3 エンドポイント

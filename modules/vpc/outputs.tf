@@ -30,6 +30,11 @@ output "db_subnet_ids" {
   value       = aws_subnet.db[*].id
 }
 
+output "management_subnet_ids" {
+  description = "管理層サブネットのIDリスト（デフォルト空。使用時は management_subnet_offsets を指定）"
+  value       = aws_subnet.management[*].id
+}
+
 # --- Route Tables ---
 
 output "public_route_table_id" {
@@ -48,7 +53,7 @@ output "db_route_table_ids" {
 }
 
 output "management_route_table_ids" {
-  description = "management層ルートテーブルのIDリスト（サブネットが0の場合は空リスト）"
+  description = "管理層ルートテーブルのIDリスト。variable 'management_subnet_offsets' を指定した場合のみ出力されます"
   value       = aws_route_table.management[*].id
 }
 
@@ -67,9 +72,4 @@ output "app_sg_id" {
 output "db_sg_id" {
   description = "DB層用セキュリティグループのID"
   value       = aws_security_group.db.id
-}
-
-output "management_subnet_ids" {
-  description = "管理層（プライベート）サブネットのIDリスト"
-  value       = aws_subnet.management[*].id
 }

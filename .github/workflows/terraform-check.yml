@@ -24,3 +24,34 @@ jobs:
 
       - name: Terraform Validate
         run: terraform validate
+
+name: "Terraform Security Scan"
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  security_scan:
+    name: "Security Scan"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      # tfsec を実行し、Terraform コード内のセキュリティ不備を検出する。
+      # soft_fail を true に設定し、ラボ段階では警告のみに留めて CI を中断させない。
+      - name: "Run tfsec"
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          soft_fail: true
+
+      # Checkov を実行し、クラウドインフラのベストプラクティス違反を確認する。
+      # 172.16.0.0/20 の設計や NACL の設定など、多角的な評価を行う。
+      - name: "Run Checkov"
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: modules/vpc
+          soft_fail: true
+          framework: terraform
