@@ -5,7 +5,6 @@ AWS VPC を構築する Terraform モジュールのラボリポジトリ。
 
 ## アーキテクチャ概要
 
-<<<<<<< HEAD
 ```mermaid
 graph TD
     Internet((Internet))
@@ -43,32 +42,6 @@ graph TD
     style Public_Layer fill:#e1f5fe,stroke:#01579b
     style App_Layer fill:#e8f5e9,stroke:#2e7d32
     style DB_Layer fill:#fff3e0,stroke:#ef6c00
-=======
-```
-                        Internet
-                           │
-                    ┌──────┴──────┐
-                    │     IGW     │
-                    └──────┬──────┘
-                           │
-          ┌────────────────┴────────────────┐
-          │         Public Subnet           │
-          │   172.16.0.0/24  172.16.1.0/24  │  ← ALB / NAT Gateway
-          │         [Public NACL]           │
-          └────────────────┬────────────────┘
-                           │
-          ┌────────────────┴────────────────┐
-          │          App Subnet             │
-          │   172.16.4.0/24  172.16.5.0/24  │  ← ECS / EC2 / Lambda
-          │          [App NACL]             │
-          └────────────────┬────────────────┘
-                           │
-          ┌────────────────┴────────────────┐
-          │           DB Subnet             │
-          │   172.16.8.0/24  172.16.9.0/24  │  ← RDS / ElastiCache
-          │    [DB NACL: app層のみ許可]      │
-          └─────────────────────────────────┘
->>>>>>> origin/main
 ```
 
 ## 設計方針
@@ -81,15 +54,9 @@ VPC に `172.16.0.0/20` を採用している。`10.0.0.0/16` はデフォルト
 
 ```
 172.16.0.0/20  (VPC全体 = 4,096 アドレス)
-<<<<<<< HEAD
 ├── offset 0–3   : Public     (0.0/24, 1.0/24, ...)
 ├── offset 4–7   : App        (4.0/24, 5.0/24, ...)
 ├── offset 8–11  : DB         (8.0/24, 9.0/24, ...)
-=======
-├── offset 0–3   : Public    (0.0/24, 1.0/24, ...)
-├── offset 4–7   : App       (4.0/24, 5.0/24, ...)
-├── offset 8–11  : DB        (8.0/24, 9.0/24, ...)
->>>>>>> origin/main
 └── offset 12–15 : Management（必要時のみ作成）
 ```
 
@@ -188,11 +155,8 @@ module "my_vpc" {
   # ...基本設定...
 
   enable_nat_gateway     = true
-<<<<<<< HEAD
   single_nat_gateway     = false
-=======
-  single_nat_gateway     = false   # AZごとに NAT Gateway を作成
->>>>>>> origin/main
+ origin/main
   one_nat_gateway_per_az = true
 }
 ```
