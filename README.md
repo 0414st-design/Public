@@ -5,6 +5,45 @@ AWS VPC を構築する Terraform モジュールのラボリポジトリ。
 
 ## アーキテクチャ概要
 
+<<<<<<< HEAD
+```mermaid
+graph TD
+    Internet((Internet))
+
+    subgraph VPC [AWS VPC: 172.16.0.0/20]
+        direction TB
+        IGW[Internet Gateway]
+
+        subgraph Public_Layer [Public Subnet: 172.16.0.0/24, 1.0/24]
+            direction LR
+            ALB[ALB]
+            NAT[NAT Gateway]
+            NACL_Pub[Public NACL]
+        end
+
+        subgraph App_Layer [App Subnet: 172.16.4.0/24, 5.0/24]
+            direction LR
+            ECS[ECS / EC2 / Lambda]
+            NACL_App[App NACL]
+        end
+
+        subgraph DB_Layer [DB Subnet: 172.16.8.0/24, 9.0/24]
+            direction LR
+            RDS[RDS / ElastiCache]
+            NACL_DB[DB NACL: App層のみ許可]
+        end
+    end
+
+    Internet --- IGW
+    IGW --- Public_Layer
+    Public_Layer --- App_Layer
+    App_Layer --- DB_Layer
+
+    style VPC fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style Public_Layer fill:#e1f5fe,stroke:#01579b
+    style App_Layer fill:#e8f5e9,stroke:#2e7d32
+    style DB_Layer fill:#fff3e0,stroke:#ef6c00
+=======
 ```
                         Internet
                            │
@@ -29,6 +68,7 @@ AWS VPC を構築する Terraform モジュールのラボリポジトリ。
           │   172.16.8.0/24  172.16.9.0/24  │  ← RDS / ElastiCache
           │    [DB NACL: app層のみ許可]      │
           └─────────────────────────────────┘
+>>>>>>> origin/main
 ```
 
 ## 設計方針
@@ -41,9 +81,15 @@ VPC に `172.16.0.0/20` を採用している。`10.0.0.0/16` はデフォルト
 
 ```
 172.16.0.0/20  (VPC全体 = 4,096 アドレス)
+<<<<<<< HEAD
+├── offset 0–3   : Public     (0.0/24, 1.0/24, ...)
+├── offset 4–7   : App        (4.0/24, 5.0/24, ...)
+├── offset 8–11  : DB         (8.0/24, 9.0/24, ...)
+=======
 ├── offset 0–3   : Public    (0.0/24, 1.0/24, ...)
 ├── offset 4–7   : App       (4.0/24, 5.0/24, ...)
 ├── offset 8–11  : DB        (8.0/24, 9.0/24, ...)
+>>>>>>> origin/main
 └── offset 12–15 : Management（必要時のみ作成）
 ```
 
@@ -95,13 +141,13 @@ module "my_vpc" {
   vpc_name = "my-vpc"
   azs      = ["ap-northeast-1a", "ap-northeast-1c"]
 
-  public_subnet_offsets = [0, 1]  # 172.16.0.0/24, 172.16.1.0/24
-  app_subnet_offsets    = [4, 5]  # 172.16.4.0/24, 172.16.5.0/24
-  db_subnet_offsets     = [8, 9]  # 172.16.8.0/24, 172.16.9.0/24
+  public_subnet_offsets    = [0, 1]  # 172.16.0.0/24, 172.16.1.0/24
+  app_subnet_offsets       = [4, 5]  # 172.16.4.0/24, 172.16.5.0/24
+  db_subnet_offsets        = [8, 9]  # 172.16.8.0/24, 172.16.9.0/24
 
-  enable_nat_gateway     = true
-  single_nat_gateway     = true
-  enable_s3_endpoint     = true
+  enable_nat_gateway       = true
+  single_nat_gateway       = true
+  enable_s3_endpoint       = true
   enable_dynamodb_endpoint = true
 
   environment = "lab"
@@ -142,7 +188,11 @@ module "my_vpc" {
   # ...基本設定...
 
   enable_nat_gateway     = true
+<<<<<<< HEAD
+  single_nat_gateway     = false
+=======
   single_nat_gateway     = false   # AZごとに NAT Gateway を作成
+>>>>>>> origin/main
   one_nat_gateway_per_az = true
 }
 ```
