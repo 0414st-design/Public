@@ -7,7 +7,9 @@ terraform {
     }
   }
 
-  # LABアカウント取得後に有効化する
+  # TODO: LABアカウント取得後にコメントアウトを解除して、以下の手順を実行する
+  # 1. terraform init (S3へのマイグレーション)
+  # 2. DynamoDBによるロックが効いているか確認
   # backend "s3" {
   #   bucket         = "mylab-tfstate"
   #   key            = "vpc/terraform.tfstate"
@@ -27,16 +29,16 @@ module "my_vpc" {
   source = "./modules/vpc"
 
   # VPCの全体範囲
-  vpc_cidr = "10.0.0.0/16"
+  vpc_cidr = "172.16.0.0/20"
   vpc_name = "my-vpc"
 
   # 使用するAZの指定
   azs = ["ap-northeast-1a", "ap-northeast-1c"]
 
   # IPアドレスを直接書くのではなく、何番目の区画(Offset)を使うか数字で指定
-  public_subnet_offsets = [1, 2]   # 10.0.1.0/24, 10.0.2.0/24 相当
-  app_subnet_offsets    = [11, 12] # 10.0.11.0/24, 10.0.12.0/24 相当
-  db_subnet_offsets     = [21, 22] # 10.0.21.0/24, 10.0.22.0/24 相当
+  public_subnet_offsets = [0, 1]  # 172.16.0.0/24, 172.16.1.0/24
+  app_subnet_offsets    = [4, 5]  # 172.16.4.0/24, 172.16.5.0/24
+  db_subnet_offsets     = [8, 9]  # 172.16.8.0/24, 172.16.9.0/24
 
   # --- NAT Gateway 設定 ---
   # まずはコストを抑えた「Single NAT Gateway」構成に設定しています
