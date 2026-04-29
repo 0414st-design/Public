@@ -1,5 +1,5 @@
 # 共通タグ（locals）
-# すべてのリソースに merge() で付与することで、タグの一元管理を実現する
+# すべてのリソースに merge() で付与することで、タグの一元管理を実現する。
 locals {
   common_tags = {
     Environment = var.environment
@@ -8,7 +8,7 @@ locals {
   }
 
   # EKS用タグ
-  # enable_eks=true かつ eks_cluster_name が指定されている場合のみ付与する
+  # enable_eks=true かつ eks_cluster_name が指定されている場合のみ付与する。
   # kubernetes.io/cluster/{name}: EKSがサブネットを認識するために必要
   eks_public_tags = var.enable_eks ? {
     "kubernetes.io/role/elb"                          = "1"
@@ -35,7 +35,7 @@ resource "aws_vpc" "this" {
 
 # パブリックサブネット
 resource "aws_subnet" "public" {
-  # Offsetリストの要素数がそのままサブネットの作成数になる（例: [1, 2] → 2つ）
+  # Offsetリストの要素数がそのままサブネットの作成数になる（例: [1, 2] → 2つ）。
   count = length(var.public_subnet_offsets)
 
   vpc_id                  = aws_vpc.this.id
@@ -55,7 +55,7 @@ resource "aws_subnet" "public" {
 
 # アプリ層のプライベートサブネット
 resource "aws_subnet" "app" {
-  # Offsetリストの要素数がそのままサブネットの作成数になる（例: [11, 12] → 2つ）
+  # Offsetリストの要素数がそのままサブネットの作成数になる（例: [11, 12] → 2つ）。
   count = length(var.app_subnet_offsets)
 
   vpc_id            = aws_vpc.this.id
@@ -73,7 +73,7 @@ resource "aws_subnet" "app" {
 
 # データ層のプライベートサブネット
 resource "aws_subnet" "db" {
-  # Offsetリストの要素数がそのままサブネットの作成数になる（例: [21, 22] → 2つ）
+  # Offsetリストの要素数がそのままサブネットの作成数になる（例: [21, 22] → 2つ）。
   count = length(var.db_subnet_offsets)
 
   vpc_id            = aws_vpc.this.id
@@ -84,14 +84,14 @@ resource "aws_subnet" "db" {
 
   tags = merge(
     local.common_tags,
-    # db層はEKSのワーカーノード・ALB配置対象外のためEKSタグは付与しない
+    # db層はEKSのワーカーノード・ALB配置対象外のためEKSタグは付与しない。
     { Name = "${var.vpc_name}-db-${var.azs[count.index]}" }
   )
 }
 
 # 管理層のプライベートサブネット
 resource "aws_subnet" "management" {
-  # Offsetリストの要素数がそのままサブネットの作成数になる（[] なら0個=作成しない）
+  # Offsetリストの要素数がそのままサブネットの作成数になる（[] なら0個=作成しない）。
   count = length(var.management_subnet_offsets)
 
   vpc_id            = aws_vpc.this.id
@@ -102,8 +102,33 @@ resource "aws_subnet" "management" {
 
   tags = merge(
     local.common_tags,
-    # management層はEKSのワーカーノード・ALB配置対象外のためEKSタグは付与しない
+    # management層はEKSのワーカーノード・ALB配置対象外のためEKSタグは付与しない。
     { Name = "${var.vpc_name}-management-${var.azs[count.index]}" }
   )
 }
+
+# 拡張例: Lambda専用サブネットが必要になった場合は以下のように追加する。
+#
+# resource "aws_subnet" "lambda_api" {
+#   count             = length(var.lambda_api_subnet_offsets)
+#   vpc_id            = aws_vpc.this.id
+#   availability_zone = var.azs[count.index]
+#   cidr_block        = cidrsubnet(var.vpc_cidr, 8, var.lambda_api_subnet_offsets[count.index])
+#   tags = merge(
+#     local.common_tags,
+#     local.eks_private_tags,
+#     { Name = "${var.vpc_name}-lambda-api-${var.azs[count.index]}" }
+#   )
+# }
+#
+# resource "aws_subnet" "lambda_data" {
+#   count             = length(var.lambda_data_subnet_offsets)
+#   vpc_id            = aws_vpc.this.id
+#   availability_zone = var.azs[count.index]
+#   cidr_block        = cidrsubnet(var.vpc_cidr, 8, var.lambda_data_subnet_offsets[count.index])
+#   tags = merge(
+#     local.common_tags,
+#     { Name = "${var.vpc_name}-lambda-data-${var.azs[count.index]}" }
+#   )
+# }
 

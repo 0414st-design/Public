@@ -31,6 +31,23 @@ variable "management_subnet_offsets" {
   default     = []
 }
 
+# 拡張例: Lambda専用サブネットが必要になった場合は以下のように追加する。
+# ユースケースが確定したタイミングで変数・サブネット・ルートテーブル・outputを追加する。
+#
+# API用Lambda（NAT GW経由でインターネット・AWSサービスに接続）
+# variable "lambda_api_subnet_offsets" {
+#   description = "API用LambdaサブネットのOffsetリスト。不要な場合は [] を指定（NAT GW経由）"
+#   type        = list(number)
+#   default     = []
+# }
+#
+# データ処理用Lambda（完全閉域・RDS/ElastiCacheのみアクセス）
+# variable "lambda_data_subnet_offsets" {
+#   description = "データ処理用LambdaサブネットのOffsetリスト。不要な場合は [] を指定（完全閉域）"
+#   type        = list(number)
+#   default     = []
+# }
+
 # --- EKS 設定 ---
 variable "enable_eks" {
   description = "EKS用のサブネットタグを付与するかどうか。EKSクラスターを作成する場合はtrueにする。"
