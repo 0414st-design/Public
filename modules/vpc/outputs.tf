@@ -57,7 +57,7 @@ output "management_route_table_ids" {
   value       = aws_route_table.management[*].id
 }
 
-# --- Security Groups (追記箇所) ---
+# --- Security Groups ---
 
 output "web_sg_id" {
   description = "Web/ALB用セキュリティグループのID"
@@ -73,3 +73,15 @@ output "db_sg_id" {
   description = "DB層用セキュリティグループのID"
   value       = aws_security_group.db.id
 }
+
+output "management_sg_id" {
+  description = "管理層用セキュリティグループのID"
+  value       = aws_security_group.management.id
+}
+
+# 拡張例: Lambdaモジュール作成時に以下のoutputを追加する。
+#
+# output "lambda_sg_id" {
+#   description = "Lambda用セキュリティグループのID"
+#   value       = aws_security_group.lambda.id
+# }

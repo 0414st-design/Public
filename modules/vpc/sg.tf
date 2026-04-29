@@ -126,3 +126,25 @@ resource "aws_security_group" "management" {
 
   tags = merge(local.common_tags, { Name = "${var.vpc_name}-management-sg" })
 }
+
+# --------------------------------------------------------------------------------------------------
+# 5. Lambda用 SG
+# VPC内Lambdaに付与する汎用SG。
+# Ingressはなし（LambdaはAWSが起動するためインバウンドルール不要）
+# EgressはVPCモジュールとして全許可にしておき、細かい制御はLambdaモジュール側で行う。
+# 配置するサブネット（app層 / db層）は呼び出し側モジュールで選択する。
+# --------------------------------------------------------------------------------------------------
+# 拡張例: Lambda専用SGが必要になった場合はLambdaモジュール作成時に追加する。
+#
+# resource "aws_security_group" "lambda" {
+#   name        = "${var.vpc_name}-lambda-sg"
+#   description = "Security group for Lambda functions running in VPC"
+#   vpc_id      = aws_vpc.this.id
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+#   tags = merge(local.common_tags, { Name = "${var.vpc_name}-lambda-sg" })
+# }
