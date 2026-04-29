@@ -93,6 +93,7 @@ No modules.
 | <a name="output_db_sg_id"></a> [db\_sg\_id](#output\_db\_sg\_id) | DB層用セキュリティグループのID |
 | <a name="output_db_subnet_ids"></a> [db\_subnet\_ids](#output\_db\_subnet\_ids) | データ層（プライベート）サブネットのIDリスト |
 | <a name="output_management_route_table_ids"></a> [management\_route\_table\_ids](#output\_management\_route\_table\_ids) | 管理層ルートテーブルのIDリスト。variable 'management\_subnet\_offsets' を指定した場合のみ出力されます |
+| <a name="output_management_sg_id"></a> [management\_sg\_id](#output\_management\_sg\_id) | 管理層用セキュリティグループのID |
 | <a name="output_management_subnet_ids"></a> [management\_subnet\_ids](#output\_management\_subnet\_ids) | 管理層サブネットのIDリスト（デフォルト空。使用時は management\_subnet\_offsets を指定） |
 | <a name="output_public_route_table_id"></a> [public\_route\_table\_id](#output\_public\_route\_table\_id) | パブリック用ルートテーブルのID |
 | <a name="output_public_subnet_ids"></a> [public\_subnet\_ids](#output\_public\_subnet\_ids) | パブリックサブネットのIDリスト |
