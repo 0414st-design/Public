@@ -1,4 +1,4 @@
-name: "Terraform CI" 
+name: "Terraform CI"
 
 on:
   push:
@@ -20,39 +20,53 @@ jobs:
       - name: "Setup Terraform"
         uses: hashicorp/setup-terraform@v3
 
-      # terraform init を実行し、必要なプロバイダーをダウンロードする。
+      # terraform init を実行し、必要なプロバイダーをダウンロードする
       - name: "Terraform Init"
         run: terraform init
 
-      # terraform fmt を実行し、コードの整形ルールに違反がないか確認する。
+      # サブディレクトリ（modules/）も含めてフォーマットをチェックする
       - name: "Terraform Format Check"
-        run: terraform fmt -check
+        run: terraform fmt -check -recursive
 
-      # terraform validate を実行し、コードの論理的な構文エラーがないか確認する。
+      # コードの論理的な構文エラーがないか確認する
       - name: "Terraform Validate"
         run: terraform validate
 
+      # TFLintでAWS固有のベストプラクティス違反を検出する
+      # .tflint.hcl にプラグイン設定を記載しているため --init が必要
+      - name: "Setup TFLint"
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: "Run TFLint"
+        run: |
+          tflint --init
+          tflint -f compact --recursive
+
   # セキュリティスキャンを行うジョブ
+  # lintジョブが成功した後にのみ実行し、リソースの浪費を防ぐ
   security_scan:
     name: "Security Scan"
     runs-on: ubuntu-latest
-    # lintジョブが成功した後に実行したい場合は「needs: lint」を追記することも可能
+    needs: lint
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v4
 
-      # tfsec を実行し、Terraform コード内のセキュリティ不備を検出する。
-      # soft_fail を true に設定し、ラボ段階では警告のみに留めて CI を中断させない。
+      # tfsecでTerraformコード内のセキュリティ不備を検出する
+      # soft_fail: trueでlab段階では警告のみに留めてCIを中断させない
       - name: "Run tfsec"
         uses: aquasecurity/tfsec-action@v1.0.0
         with:
           soft_fail: true
 
-      # Checkov を実行し、クラウドインフラのベストプラクティス違反を確認する。
-      # 172.16.0.0/20 の設計や NACL の設定など、多角的な評価を行う。
+      # Checkovでクラウドインフラのベストプラクティス違反を確認する
+      # directory: . でルートから再帰的にスキャンしモジュール間の不備も検出する
+      # バージョンを固定し再現性を担保する（dependabotが自動更新）
       - name: "Run Checkov"
-        uses: bridgecrewio/checkov-action@master
+        uses: bridgecrewio/checkov-action@v12
         with:
-          directory: modules/vpc
+          directory: .
           soft_fail: true
           framework: terraform
