@@ -1,7 +1,7 @@
 # terraform-mylab
 
-AWS VPC を構築する Terraform モジュールのラボリポジトリ。
-学習目的でありながら、そのまま実環境で使えることを設計基準に置いている。
+AWS インフラを構築する Terraform モジュールのラボリポジトリ。
+学習目的でありながら実環境で使えることを設計基準に置いている。
 
 ## アーキテクチャ概要
 
@@ -31,17 +31,25 @@ graph TD
             RDS[RDS / ElastiCache]
             NACL_DB[DB NACL: App層のみ許可]
         end
+
+        subgraph Mgmt_Layer [Management Subnet: 172.16.12.0/24]
+            direction LR
+            Bastion[Bastion EC2]
+            SSM[SSM Session Manager]
+        end
     end
 
     Internet --- IGW
     IGW --- Public_Layer
     Public_Layer --- App_Layer
     App_Layer --- DB_Layer
+    NAT --- Mgmt_Layer
 
     style VPC fill:#f9f9f9,stroke:#333,stroke-width:2px
     style Public_Layer fill:#e1f5fe,stroke:#01579b
     style App_Layer fill:#e8f5e9,stroke:#2e7d32
     style DB_Layer fill:#fff3e0,stroke:#ef6c00
+    style Mgmt_Layer fill:#f3e5f5,stroke:#6a1b9a
 ```
 
 ## 設計方針
@@ -80,20 +88,31 @@ VPC に `172.16.0.0/20` を採用している。`10.0.0.0/16` はデフォルト
 
 ```
 .
-├── main.tf                  # ルート: プロバイダー・モジュール呼び出し
+├── backend.tf               # Terraform設定・S3バックエンド（LAB後有効化）
+├── provider.tf              # AWSプロバイダー設定
+├── locals.tf                # 共通タグ・変数
+├── vpc.tf                   # VPCモジュールの呼び出し
+├── compute.tf               # Computeモジュールの呼び出し（踏み台EC2）
+├── iam.tf                   # SSM用IAMロール・インスタンスプロファイル
+├── .tflint.hcl              # TFLint設定
 └── modules/
-    └── vpc/
-        ├── main.tf          # VPC・サブネット定義
-        ├── variables.tf     # 入力変数（全設定はここから）
-        ├── outputs.tf       # 他モジュールへの公開値
-        ├── igw.tf           # Internet Gateway
-        ├── nat.tf           # NAT Gateway・EIP
-        ├── route_tables.tf  # ルートテーブル（全層）
-        ├── nacl.tf          # Network ACL（public / app / db）
-        ├── sg.tf            # Security Group（web / app / db）
-        ├── endpoints.tf     # VPC Endpoint（S3 / DynamoDB）
-        ├── flow_logs.tf     # VPC Flow Logs + IAM
-        └── versions.tf      # Provider バージョン制約
+├── vpc/
+│   ├── main.tf          # VPC・サブネット定義
+│   ├── variables.tf     # 入力変数（全設定はここから）
+│   ├── outputs.tf       # 他モジュールへの公開値
+│   ├── igw.tf           # Internet Gateway
+│   ├── nat.tf           # NAT Gateway・EIP
+│   ├── route_tables.tf  # ルートテーブル（全層）
+│   ├── nacl.tf          # Network ACL（public層）
+│   ├── sg.tf            # Security Group（web / app / db / management）
+│   ├── endpoints.tf     # VPC Endpoint（S3 / DynamoDB）
+│   ├── flow_logs.tf     # VPC Flow Logs + IAM
+│   └── versions.tf      # Providerバージョン制約
+└── compute/
+├── main.tf          # EC2インスタンス・AMI自動取得
+├── variables.tf     # 入力変数
+├── outputs.tf       # instance_id・private_ip
+└── versions.tf      # Providerバージョン制約
 ```
 
 ## 使い方
@@ -156,7 +175,6 @@ module "my_vpc" {
 
   enable_nat_gateway     = true
   single_nat_gateway     = false
- origin/main
   one_nat_gateway_per_az = true
 }
 ```
@@ -200,9 +218,9 @@ module "my_vpc" {
 
 | ワークフロー | トリガー | 内容 |
 |---|---|---|
-| `terraform-check.yml` | push / PR | `terraform fmt -check` + `terraform validate` |
+| `terraform-check.yml` | push / PR | `fmt -check` + `validate` + `TFLint` + `tfsec` + `Checkov` |
 | `docs.yml` | PR → main | `terraform-docs` で `modules/vpc/README.md` を自動更新 |
-| `dependabot.yml` | 週次 | Provider バージョンの自動アップデート PR |
+| `dependabot.yml` | 日次 | Actions・Provider バージョンの自動アップデート PR |
 
 ## Requirements
 
