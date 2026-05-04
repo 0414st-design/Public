@@ -127,6 +127,7 @@ resource "aws_security_group" "management" {
   tags = merge(local.common_tags, { Name = "${var.vpc_name}-management-sg" })
 }
 
+# 拡張例: Lambda専用SGが必要になった場合はLambdaモジュール作成時に追加する。
 # --------------------------------------------------------------------------------------------------
 # 5. Lambda用 SG
 # VPC内Lambdaに付与する汎用SG。
@@ -134,7 +135,6 @@ resource "aws_security_group" "management" {
 # EgressはVPCモジュールとして全許可にしておき、細かい制御はLambdaモジュール側で行う。
 # 配置するサブネット（app層 / db層）は呼び出し側モジュールで選択する。
 # --------------------------------------------------------------------------------------------------
-# 拡張例: Lambda専用SGが必要になった場合はLambdaモジュール作成時に追加する。
 #
 # resource "aws_security_group" "lambda" {
 #   name        = "${var.vpc_name}-lambda-sg"
