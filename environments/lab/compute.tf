@@ -4,7 +4,7 @@
 # 実際に使用する際は必ずサブネットを1つ以上指定すること。
 
 module "bastion" {
-  source = "./modules/compute"
+  source = "../../modules/compute"
 
   # --- 基本設定 ---
   instance_name = "${local.project}-${local.environment}-bastion"
