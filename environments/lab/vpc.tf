@@ -1,6 +1,6 @@
 # 作ったモジュールを呼びだす
 module "my_vpc" {
-  source = "./modules/vpc"
+  source = "../../modules/vpc"
 
   # VPCの全体範囲
   vpc_cidr = "172.16.0.0/20"
