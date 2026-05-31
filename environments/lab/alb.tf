@@ -16,14 +16,14 @@ module "alb" {
   vpc_id              = module.vpc.vpc_id
   public_subnet_ids   = module.vpc.public_subnet_ids
   app_sg_id           = module.compute.app_sg_id
-  acm_certificate_arn = "arn:aws:acm:ap-northeast-1:123456789012:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-  access_logs_bucket  = "my-project-alb-access-logs-lab"
+  acm_certificate_arn = local.alb_acm_arn
+  access_logs_bucket  = local.alb_logs_bucket
 
   # --- 任意変数（環境ごとに上書き） ---
-  alb_name           = "${local.project}-${local.env}-alb"
+  alb_name           = "${local.project}-${local.environment}-alb"
   target_port        = 8080
   health_check_path  = "/health"
-  access_logs_prefix = "${local.project}/${local.env}/alb"
+  access_logs_prefix = "${local.project}/${local.environment}/alb"
 
   # --- タグ: locals.tf の common_tags をそのまま渡す ---
   tags = local.common_tags
