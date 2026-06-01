@@ -15,7 +15,7 @@ module "alb" {
   # --- 必須変数 ---
   vpc_id              = module.vpc.vpc_id
   public_subnet_ids   = module.vpc.public_subnet_ids
-  app_sg_id           = module.compute.app_sg_id
+  app_sg_id           = module.app_compute.security_group_id
   acm_certificate_arn = local.alb_acm_arn
   access_logs_bucket  = local.alb_logs_bucket
 

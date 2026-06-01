@@ -4,7 +4,7 @@
 # 実際に使用する際は必ずサブネットを1つ以上指定すること。
 
 module "bastion" {
-  source = "../../modules/compute"
+  source = "../../modules/bastion"
 
   # --- 基本設定 ---
   instance_name = "${local.project}-${local.environment}-bastion"
@@ -25,5 +25,5 @@ module "bastion" {
 
   # --- タグ設定 ---
   # ルートのlocals.tfで定義した共通タグを渡す。
-  common_tags = local.common_tags
+  tags = local.common_tags
 }

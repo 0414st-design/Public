@@ -52,7 +52,7 @@ variable "root_volume_type" {
 }
 
 # --- タグ設定 ---
-variable "common_tags" {
+variable "tags" {
   description = "全リソースに付与する共通タグ（ルートのlocals.tfから渡す。）"
   type        = map(string)
   default     = {}

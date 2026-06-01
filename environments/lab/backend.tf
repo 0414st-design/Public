@@ -12,7 +12,7 @@ terraform {
   # 2. DynamoDBによるロックが効いているか確認
   # backend "s3" {
   # bucket         = "mylab-tfstate"
-  # key            = "vpc/terraform.tfstate"
+  # key            = "lab/terraform.tfstate"
   # region         = "ap-northeast-1"
   # dynamodb_table = "mylab-tfstate-lock"
   # encrypt        = true

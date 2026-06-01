@@ -1,11 +1,7 @@
 # 共通タグ（locals）
 # すべてのリソースに merge() で付与することで、タグの一元管理を実現する。
 locals {
-  common_tags = {
-    Environment = var.environment
-    Project     = var.project
-    ManagedBy   = "Terraform"
-  }
+  common_tags = var.tags
 
   # EKS用タグ
   # enable_eks=true かつ eks_cluster_name が指定されている場合のみ付与する。
