@@ -41,7 +41,7 @@ resource "aws_iam_role" "vpc_flow_log_role" {
 # 4. IAMポリシー
 # フローログを CloudWatch Logs に書き込むための最小限の権限を、インラインポリシーで定義する。
 resource "aws_iam_role_policy" "vpc_flow_log_policy" {
-  name = "${var.project}-${var.environment}-${var.vpc_name}-flow-log-policy"
+  name_prefix = "${var.project}-${var.environment}-${var.vpc_name}-flow-log-policy-"
   role = aws_iam_role.vpc_flow_log_role.id
 
   policy = jsonencode({

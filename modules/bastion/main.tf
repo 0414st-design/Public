@@ -46,13 +46,13 @@ resource "aws_instance" "this" {
   user_data = null
 
   tags = merge(
-    var.common_tags,
+    var.tags,
     { Name = var.instance_name }
   )
 
   # ルートボリュームのタグも統一する。
   volume_tags = merge(
-    var.common_tags,
+    var.tags,
     { Name = "${var.instance_name}-root" }
   )
 }

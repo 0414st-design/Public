@@ -72,25 +72,25 @@ variable "vpc_name" {
   type        = string
 }
 
+variable "project" {
+  description = "プロジェクト名。"
+  type        = string
+}
+
+variable "environment" {
+  description = "環境名 (例: lab, prod)。"
+  type        = string
+}
+
 variable "azs" {
   description = "使用するアベイラビリティゾーンのリスト。 (例: ['ap-northeast-1a', 'ap-northeast-1c'])"
   type        = list(string)
 }
 
-variable "environment" {
-  description = "実行環境名 (例: dev, stg, prd)"
-  type        = string
-
-  # バリデーションの追加例：予期しない環境名が入るのを防ぐ。
-  validation {
-    condition     = contains(["dev", "stg", "prd", "lab"], var.environment)
-    error_message = "環境名は dev, stg, prd, lab のいずれかである必要があります。"
-  }
-}
-
-variable "project" {
-  description = "プロジェクト名 (リソース識別用)"
-  type        = string
+variable "tags" {
+  description = "全リソースに付与する共通タグ（ルートのlocals.tfから渡す。）"
+  type        = map(string)
+  default     = {}
 }
 
 variable "enable_s3_endpoint" {

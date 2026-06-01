@@ -27,4 +27,5 @@ module "my_vpc" {
   # タグ用の変数
   project     = local.project
   environment = local.environment
+  tags = local.common_tags
 }
