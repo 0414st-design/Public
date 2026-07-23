@@ -57,7 +57,7 @@ jobs:
       # tfsecでTerraformコード内のセキュリティ不備を検出する
       # soft_fail: trueでlab段階では警告のみに留めてCIを中断させない
       - name: "Run tfsec"
-        uses: aquasecurity/tfsec-action@v1.0.0
+        uses: aquasecurity/tfsec-action@v1.0.3
         with:
           soft_fail: true
 

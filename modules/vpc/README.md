@@ -3,13 +3,13 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.30.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.30.0 |
 
 ## Modules
 
@@ -72,13 +72,14 @@ No modules.
 | <a name="input_enable_eks"></a> [enable\_eks](#input\_enable\_eks) | EKS用のサブネットタグを付与するかどうか。EKSクラスターを作成する場合はtrueにする。 | `bool` | `false` | no |
 | <a name="input_enable_nat_gateway"></a> [enable\_nat\_gateway](#input\_enable\_nat\_gateway) | NAT Gatewayを作成し、プライベートサブネットからインターネットへの通信を可能にするか。 | `bool` | `false` | no |
 | <a name="input_enable_s3_endpoint"></a> [enable\_s3\_endpoint](#input\_enable\_s3\_endpoint) | S3ゲートウェイエンドポイントを作成するかどうか。 | `bool` | `false` | no |
-| <a name="input_environment"></a> [environment](#input\_environment) | 実行環境名 (例: dev, stg, prd) | `string` | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | 環境名 (例: lab, prod)。 | `string` | n/a | yes |
 | <a name="input_flow_log_retention_days"></a> [flow\_log\_retention\_days](#input\_flow\_log\_retention\_days) | VPCフローログ(CloudWatch Logs)の保持日数 | `number` | `7` | no |
 | <a name="input_management_subnet_offsets"></a> [management\_subnet\_offsets](#input\_management\_subnet\_offsets) | 管理層サブネットを cidrsubnet 関数で計算する際の第3引数(インデックス)のリスト。踏み台・監視等に使用。不要な場合は [] を指定。指定時のみリソースが作成されます。 | `list(number)` | `[]` | no |
 | <a name="input_one_nat_gateway_per_az"></a> [one\_nat\_gateway\_per\_az](#input\_one\_nat\_gateway\_per\_az) | 可用性を高めるため、各AZに1つずつNAT Gatewayを作成するか。 | `bool` | `false` | no |
-| <a name="input_project"></a> [project](#input\_project) | プロジェクト名 (リソース識別用) | `string` | n/a | yes |
+| <a name="input_project"></a> [project](#input\_project) | プロジェクト名。 | `string` | n/a | yes |
 | <a name="input_public_subnet_offsets"></a> [public\_subnet\_offsets](#input\_public\_subnet\_offsets) | パブリックサブネットを cidrsubnet 関数で計算する際の第3引数(インデックス)のリスト | `list(number)` | <pre>[<br/>  0,<br/>  1<br/>]</pre> | no |
 | <a name="input_single_nat_gateway"></a> [single\_nat\_gateway](#input\_single\_nat\_gateway) | すべてのプライベートサブネットで1つのNAT Gatewayを共有し、コストを最小化するか。 | `bool` | `true` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | 全リソースに付与する共通タグ（ルートのlocals.tfから渡す。） | `map(string)` | `{}` | no |
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | VPC全体のIP範囲 (将来の競合を避けるため 172.16系 /20 を推奨) | `string` | `"172.16.0.0/20"` | no |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | VPCの名称 (タグやリソース名の接頭辞に使用)。 | `string` | n/a | yes |
 
