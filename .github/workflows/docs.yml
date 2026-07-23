@@ -14,7 +14,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Render terraform docs
-        uses: terraform-docs/gh-actions@v1.3.0   # ← 最新安定版に更新
+        uses: terraform-docs/gh-actions@v1.4.1   # ← 最新安定版に更新
         with:
           working-dir: modules/vpc   # ← モジュール単位で生成する方が精度高い
           output-file: README.md
