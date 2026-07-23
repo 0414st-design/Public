@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: "Setup Terraform"
         uses: hashicorp/setup-terraform@v3
@@ -52,7 +52,7 @@ jobs:
     needs: lint
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # tfsecでTerraformコード内のセキュリティ不備を検出する
       # soft_fail: trueでlab段階では警告のみに留めてCIを中断させない
