@@ -9,7 +9,7 @@ jobs:
     permissions:
       contents: write          # ← 明示的に権限を宣言
     steps:
-      - uses: actions/checkout@v4    # ← v4に統一
+      - uses: actions/checkout@v7    # ← v4に統一
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
