@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "Setup Terraform"
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4
 
       # terraform init を実行し、必要なプロバイダーをダウンロードする
       - name: "Terraform Init"
